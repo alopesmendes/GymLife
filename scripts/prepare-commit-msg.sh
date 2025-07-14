@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to install prepare-commit-msg hook
-# Usage: ./install-commit-hook.sh
+# Usage: ./prepare-commit-msg.sh
 
 set -e
 
