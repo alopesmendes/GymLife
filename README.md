@@ -1,3 +1,12 @@
+![Coverage](https://img.shields.io/codecov/c/github/alopesmendes/GymLife)
+![Language](https://img.shields.io/github/languages/top/alopesmendes/GymLife)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/alopesmendes/GymLife)
+![GitHub issues](https://img.shields.io/github/issues/alopesmendes/GymLife)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/alopesmendes/GymLife/ci.yml)
+![GitHub](https://img.shields.io/github/license/alopesmendes/GymLife)
+![GitHub last commit](https://img.shields.io/github/last-commit/alopesmendes/GymLife)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/alopesmendes/GymLife)
+
 This is a Kotlin Multiplatform project targeting Android, iOS, Web, Desktop, Server.
 
 * `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
