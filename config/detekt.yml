@@ -1,0 +1,110 @@
+config:
+  validation: true
+  warningsAsErrors: false
+  excludes: ''
+
+complexity:
+  LongParameterList:
+    active: true
+    ignoreDefaultParameters: true
+    functionThreshold: 15
+    excludes:
+      - '**.mock.**'
+      - '**.test.**'
+      - '**.androidTest.**'
+      - '**.commonTest.**'
+      - '**.jvmTest.**'
+      - '**.androidUnitTest.**'
+      - '**.androidInstrumentedTest.**'
+      - '**.jsTest.**'
+      - '**.iosTest.**'
+
+  LongMethod:
+    active: true
+    threshold: 60
+    excludes:
+      - '**.mock.**'
+      - '**.test.**'
+      - '**.androidTest.**'
+      - '**.commonTest.**'
+      - '**.jvmTest.**'
+      - '**.androidUnitTest.**'
+      - '**.androidInstrumentedTest.**'
+      - '**.jsTest.**'
+      - '**.iosTest.**'
+    ignoreAnnotated:
+      - 'Test'
+      - 'ParameterizedTest'
+    ignoreFunction:
+      - 'reducer'
+
+  TooManyFunctions:
+    active: true
+    ignoreAnnotated:
+      - 'Preview'
+    excludes:
+      - '**.mock.**'
+      - '**.test.**'
+      - '**.androidTest.**'
+      - '**.commonTest.**'
+      - '**.jvmTest.**'
+      - '**.androidUnitTest.**'
+      - '**.androidInstrumentedTest.**'
+      - '**.jsTest.**'
+      - '**.iosTest.**'
+
+  LargeClass:
+    active: true
+    threshold: 600
+    excludes:
+      - "**.mock.**"
+      - '**.test.**'
+      - '**.androidTest.**'
+      - '**.commonTest.**'
+      - '**.jvmTest.**'
+      - '**.androidUnitTest.**'
+      - '**.androidInstrumentedTest.**'
+      - '**.jsTest.**'
+      - '**.iosTest.**'
+      - '**/*Reducer.kt'
+    ignoreAnnotated:
+      - 'Test'
+
+naming:
+  FunctionNaming:
+    active: true
+    ignoreAnnotated:
+      - 'Composable'
+    excludes:
+      - '**.test.**'
+      - '**.androidTest.**'
+      - '**.commonTest.**'
+      - '**.jvmTest.**'
+      - '**.androidUnitTest.**'
+      - '**.androidInstrumentedTest.**'
+      - '**.jsTest.**'
+      - '**.iosTest.**'
+      - '**/iosMain/**/MainViewController.kt'
+
+  MatchingDeclarationName:
+    active: true
+    mustBeFirst: true
+    excludes:
+      - '**/*.android.kt'
+      - '**/*.ios.kt'
+      - '**/*.wasmJs.kt'
+      - '**/*.jvm.kt'
+
+style:
+  MagicNumber:
+    active: true
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+
+  UnusedPrivateMember:
+    active: true
+    ignoreAnnotated:
+      - 'Preview'
+
+  WildcardImport:
+    active: false

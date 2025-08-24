@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kover)
+    alias(libs.plugins.detekt)
 }
 
 kotlin {

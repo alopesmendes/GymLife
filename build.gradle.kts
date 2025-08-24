@@ -1,4 +1,4 @@
-import kotlinx.kover.gradle.plugin.dsl.GroupingEntityType
+import io.gitlab.arturbosch.detekt.Detekt
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 plugins {
@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.ktlint) apply false
     alias(libs.plugins.kover)
+    alias(libs.plugins.detekt)
 }
 
 kover {
@@ -31,7 +32,7 @@ kover {
             // Exclude Compose resources
             excludes.packages("**/composeResources/**")
             excludes.classes("**.*Res*") // Compose resources classes
-            excludes.classes("**/Res\$*") // Compose resources nested classes
+            excludes.classes("**/Res$*") // Compose resources nested classes
 
             // Exclude functions with @Preview annotation
             excludes.annotatedBy("androidx.compose.ui.tooling.preview.Preview")
@@ -44,7 +45,7 @@ kover {
             excludes.classes("*BuildConfig*") // Build config
             excludes.classes("*Manifest*") // Android manifest
             excludes.classes("*.R") // Android resources
-            excludes.classes("*.R\$*") // Android resources
+            excludes.classes("*.R$*") // Android resources
         }
 
         verify {
@@ -57,9 +58,25 @@ kover {
     }
 }
 
+detekt {
+    parallel = true
+    allRules = false
+    autoCorrect = true
+    buildUponDefaultConfig = true
+    source.setFrom(
+        files(
+            "${project.rootDir}/composeApp/src/",
+            "${project.rootDir}/shared/src",
+            "${project.rootDir}/server/src")
+    )
+    config.setFrom(file("$rootDir/config/detekt.yml"))
+    ignoreFailures = false
+}
+
 subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint") // Version should be inherited from parent
     apply(plugin = "org.jetbrains.kotlinx.kover")
+    apply(plugin = "io.gitlab.arturbosch.detekt")
 
     repositories {
         // Required to download KtLint
@@ -79,17 +96,32 @@ subprojects {
         }
     }
 
+    // Configure Detekt for each subproject
+    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
+        config.setFrom(file("$rootDir/config/detekt.yml"))
+        parallel = true
+        autoCorrect = true
+        buildUponDefaultConfig = true
+    }
+
     // Project-specific coverage rules can still be configured in individual build.gradle.kts files
     afterEvaluate {
         tasks.findByName("check")?.dependsOn("ktlintCheck")
-        // Add kover verification to check task
-        tasks.findByName("check")?.dependsOn("koverVerify")
     }
 
     tasks.register("format") {
         group = "formatting"
         description = "Format Kotlin code with ktlint"
         dependsOn("ktlintFormat")
+    }
+
+    tasks.withType<Detekt>().configureEach {
+        reports {
+            xml.required.set(true)
+            sarif.required.set(true)
+            html.required.set(true)
+            txt.required.set(false)
+        }
     }
 }
 
@@ -123,6 +155,7 @@ tasks.register("setupProject") {
         println("   ./gradlew format                       - Format all code")
         println("   ./gradlew check                        - Check code style and coverage")
         println("   ./gradlew test -Pkover koverHtmlReport - Get the coverage from all projects")
+        println("   ./gradlew detekt                       - Run detekt on all projects")
         println("   ./gradlew setupProject                 - Run this setup again")
     }
 }

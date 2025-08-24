@@ -16,6 +16,7 @@ ktor = "3.2.3"
 logback = "1.5.18"
 ktlint = "13.1.0"
 kover = "0.9.1"
+detekt = "1.23.8"
 
 [libraries]
 # KOTLIN
@@ -48,3 +49,4 @@ ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
