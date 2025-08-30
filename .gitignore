@@ -18,3 +18,6 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 /kotlin-js-store/wasm/yarn.lock
 /iosApp/Configuration/DynamicConfig.xcconfig
+/composeApp/src/androidMain/keystore.jks
+/composeApp/debug/*
+/composeApp/release/*
