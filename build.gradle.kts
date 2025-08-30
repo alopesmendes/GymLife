@@ -11,7 +11,8 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinJvm) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
-    alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.buildKonfig) apply false
+    alias(libs.plugins.ktlint)
     alias(libs.plugins.kover)
     alias(libs.plugins.detekt)
 }
@@ -67,7 +68,8 @@ detekt {
         files(
             "${project.rootDir}/composeApp/src/",
             "${project.rootDir}/shared/src",
-            "${project.rootDir}/server/src")
+            "${project.rootDir}/server/src",
+        ),
     )
     config.setFrom(file("$rootDir/config/detekt.yml"))
     ignoreFailures = false
@@ -132,17 +134,17 @@ allprojects {
         gradlePluginPortal()
     }
 }
-
-val preCommitHook = tasks.register("preCommit", Copy::class) {
-    group = "git hooks"
-    description = "Installs the pre-commit Git hook script"
-    from("$rootDir/scripts/pre-commit.sh")
-    into("$rootDir/.git/hooks")
-    rename("pre-commit.sh", "pre-commit")
-    filePermissions {
-        unix("rwxr-xr-x")
+val preCommitHook =
+    tasks.register("preCommit", Copy::class) {
+        group = "git hooks"
+        description = "Installs the pre-commit Git hook script"
+        from("$rootDir/scripts/pre-commit.sh")
+        into("$rootDir/.git/hooks")
+        rename("pre-commit.sh", "pre-commit")
+        filePermissions {
+            unix("rwxr-xr-x")
+        }
     }
-}
 
 tasks.register("setupProject") {
     group = "setup"
