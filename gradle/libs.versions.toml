@@ -22,6 +22,7 @@ firebase-bom = "33.9.0"
 google-play-services = "4.4.3"
 firebaseCommonKtx = "21.0.0"
 firebase = "2.1.0"
+desugar-jdk-libs = "2.1.5"
 
 [libraries]
 # KOTLIN
@@ -36,6 +37,7 @@ androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayo
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+android-desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar-jdk-libs" }
 
 # KTOR
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
@@ -47,6 +49,8 @@ ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.re
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
 firebase-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase" }
+firebase-common = { module = "dev.gitlive:firebase-common", version.ref = "firebase" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -65,5 +69,6 @@ google-playServices = { id = "com.google.gms.google-services", version.ref = "go
 
 [bundles]
 firebase = [
+    "firebase-common",
     "firebase-config",
 ]

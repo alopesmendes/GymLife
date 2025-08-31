@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1005912110044",
+    "project_id": "gymlife-dev",
+    "storage_bucket": "gymlife-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005912110044:android:b71ecee5da5518dcf2d519",
+        "android_client_info": {
+          "package_name": "com.ailtontech.gymlife.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSNERDcqsqdwCC2OrnKhZD0yuPMxY_NVk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
