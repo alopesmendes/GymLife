@@ -7,8 +7,8 @@ androidx-activity = "1.10.1"
 androidx-appcompat = "1.7.1"
 androidx-constraintlayout = "2.2.1"
 androidx-core = "1.17.0"
-androidx-lifecycle = "2.9.2"
-composeHotReload = "1.0.0-beta05"
+androidx-lifecycle = "2.9.3"
+composeHotReload = "1.0.0-beta06"
 composeMultiplatform = "1.8.2"
 kotlin = "2.2.10"
 kotlinx-coroutines = "1.10.2"
@@ -18,6 +18,10 @@ ktlint = "13.1.0"
 kover = "0.9.1"
 detekt = "1.23.8"
 buildKonfig = "0.17.1"
+firebase-bom = "33.9.0"
+google-play-services = "4.4.3"
+firebaseCommonKtx = "21.0.0"
+firebase = "2.1.0"
 
 [libraries]
 # KOTLIN
@@ -39,6 +43,11 @@ ktor-serverCore = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor
 ktor-serverNetty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
 
+# FIREBASE
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
+firebase-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -52,3 +61,9 @@ ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig" }
+google-playServices = { id = "com.google.gms.google-services", version.ref = "google-play-services" }
+
+[bundles]
+firebase = [
+    "firebase-config",
+]
