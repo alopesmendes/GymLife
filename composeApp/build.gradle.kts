@@ -125,10 +125,13 @@ kotlin {
             implementation(libs.androidx.appcompat)
             implementation(libs.androidx.constraintlayout)
             implementation(project.dependencies.platform(libs.firebase.bom))
-            implementation(libs.bundles.firebase)
+            implementation(libs.firebase.config)
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.koin.android)
         }
 
         iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
 
         commonMain.dependencies {
@@ -141,6 +144,10 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
+            implementation(libs.bundles.ktor.client)
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.bundles.koin.compose)
+            implementation(libs.napier)
         }
 
         commonTest.dependencies {
@@ -150,8 +157,16 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
-            implementation(libs.bundles.firebase)
+            implementation(libs.ktor.client.cio)
         }
+
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.wasm)
+        }
+    }
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 }
 
@@ -194,17 +209,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-        isCoreLibraryDesugaringEnabled = true
-    }
-
-    dependencies {
-        coreLibraryDesugaring(libs.android.desugar.jdk.libs)
     }
 }
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    implementation(libs.firebase.common.ktx)
 }
 
 compose.desktop {

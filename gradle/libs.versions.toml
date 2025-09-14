@@ -1,9 +1,9 @@
 [versions]
-agp = "8.12.2"
+agp = "8.13.0"
 android-compileSdk = "36"
 android-minSdk = "24"
-android-targetSdk = "35"
-androidx-activity = "1.10.1"
+android-targetSdk = "36"
+androidx-activity = "1.11.0"
 androidx-appcompat = "1.7.1"
 androidx-constraintlayout = "2.2.1"
 androidx-core = "1.17.0"
@@ -12,23 +12,24 @@ composeHotReload = "1.0.0-beta06"
 composeMultiplatform = "1.8.2"
 kotlin = "2.2.10"
 kotlinx-coroutines = "1.10.2"
-ktor = "3.2.3"
+ktor = "3.3.0"
 logback = "1.5.18"
 ktlint = "13.1.0"
 kover = "0.9.1"
 detekt = "1.23.8"
 buildKonfig = "0.17.1"
-firebase-bom = "33.9.0"
+firebase-bom = "34.2.0"
 google-play-services = "4.4.3"
-firebaseCommonKtx = "21.0.0"
-firebase = "2.1.0"
-desugar-jdk-libs = "2.1.5"
+kotlinx-serialisation = "1.9.0"
+koin = "4.1.1"
+napier = "2.7.1"
 
 [libraries]
 # KOTLIN
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-serialisation-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialisation" }
 
 # ANDROIDX
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
@@ -37,20 +38,35 @@ androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayo
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
-android-desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar-jdk-libs" }
 
 # KTOR
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 ktor-serverCore = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-serverNetty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-serverTestHost = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
+ktor-client = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-client-wasm = { module = "io.ktor:ktor-client-js-wasm-js", version.ref = "ktor"}
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+# KOIN
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin" }
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-compose = { module = "io.insert-koin:koin-compose" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
+koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 
 # FIREBASE
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
-firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
-firebase-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase" }
-firebase-common = { module = "dev.gitlive:firebase-common", version.ref = "firebase" }
+firebase-config = { module = "com.google.firebase:firebase-config" }
 
+# NAPIER
+napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -68,7 +84,15 @@ buildKonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildKonfig"
 google-playServices = { id = "com.google.gms.google-services", version.ref = "google-play-services" }
 
 [bundles]
-firebase = [
-    "firebase-common",
-    "firebase-config",
+ktor-client = [
+    "ktor-client",
+    "ktor-client-logging",
+    "ktor-client-contentNegotiation",
+    "ktor-serialization-kotlinx-json"
+]
+
+koin-compose = [
+    "koin-compose",
+    "koin-compose-viewmodel",
+    "koin-compose-viewmodel-navigation",
 ]
