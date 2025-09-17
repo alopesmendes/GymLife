@@ -17,6 +17,7 @@ plugins {
     alias(libs.plugins.kover)
     alias(libs.plugins.detekt)
     alias(libs.plugins.buildKonfig)
+    alias(libs.plugins.google.playServices)
 }
 
 fun getVariable(name: String): String? {
@@ -68,6 +69,9 @@ val appName
         else -> "GymLife $environment"
     }
 
+// Firebase configuration file names based on environment
+val androidFirebaseConfigFile = "google-services-${environment}.json"
+val iosFirebaseConfigFile = "GoogleService-Info-${environment}.plist"
 
 kotlin {
     androidTarget {
@@ -120,7 +124,16 @@ kotlin {
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.appcompat)
             implementation(libs.androidx.constraintlayout)
+            implementation(project.dependencies.platform(libs.firebase.bom))
+            implementation(libs.firebase.config)
+            implementation(libs.ktor.client.okhttp)
+            implementation(libs.koin.android)
         }
+
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -131,14 +144,29 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(projects.shared)
+            implementation(libs.bundles.ktor.client)
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.bundles.koin.compose)
+            implementation(libs.napier)
         }
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
+            implementation(libs.ktor.client.cio)
         }
+
+        wasmJsMain.dependencies {
+            implementation(libs.ktor.client.wasm)
+        }
+    }
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
     }
 }
 
@@ -156,10 +184,6 @@ android {
 
         // Generate string resources with dynamic app name
         resValue("string", "app_name", appName)
-
-        // Optional: Add environment as build config
-        buildConfigField("String", "ENVIRONMENT", "\"${environment}\"")
-        buildConfigField("String", "APP_NAME", "\"${appName}\"")
     }
 
     packaging {
@@ -221,7 +245,42 @@ buildkonfig {
     }
 }
 
-// Task to generate iOS configuration file
+// Task to copy the correct Android Firebase config
+abstract class ConfigureAndroidFirebaseTask : DefaultTask() {
+    @get:Input
+    abstract val configureFirebaseEnvironment: Property<String>
+
+    @get:InputFile
+    abstract val sourceFile: RegularFileProperty
+
+    @get:OutputFile
+    abstract val targetFile: RegularFileProperty
+
+    @TaskAction
+    fun configure() {
+        val source = sourceFile.get().asFile
+        val target = targetFile.get().asFile
+
+        if (!source.exists()) {
+            throw GradleException("Firebase config file not found: ${source.absolutePath}")
+        }
+
+        target.parentFile.mkdirs()
+        source.copyTo(target, overwrite = true)
+
+        println("✅ Configured Android Firebase for environment: ${configureFirebaseEnvironment.get()}")
+        println("   Source: ${source.name}")
+        println("   Target: ${target.absolutePath}")
+    }
+}
+
+tasks.register<ConfigureAndroidFirebaseTask>("configureAndroidFirebase") {
+    configureFirebaseEnvironment.set(environment)
+    sourceFile.set(File(project.projectDir, "src/androidMain/$androidFirebaseConfigFile"))
+    targetFile.set(File(project.projectDir, "google-services.json"))
+}
+
+// Task to generate iOS configuration file (enhanced with Firebase config)
 abstract class GenerateIOSConfigTask : DefaultTask() {
     @get:Input
     abstract val generateEnvironment: Property<String>
@@ -231,6 +290,9 @@ abstract class GenerateIOSConfigTask : DefaultTask() {
 
     @get:Input
     abstract val generateAppIdentifier: Property<String>
+
+    @get:Input
+    abstract val firebaseConfigFile: Property<String>
 
     @get:OutputFile
     abstract val outputFile: RegularFileProperty
@@ -252,22 +314,80 @@ abstract class GenerateIOSConfigTask : DefaultTask() {
             CURRENT_PROJECT_VERSION = 1
             MARKETING_VERSION = 1.0.0
 
+            // Firebase Configuration
+            FIREBASE_CONFIG_FILE = ${firebaseConfigFile.get()}
+
             // Additional build settings can be added here
         """.trimIndent()
 
         file.writeText(configContent)
-        println("Generated iOS config: ${file.absolutePath}")
-        println("App name: ${generateAppName.get()}")
-        println("Bundle ID: ${generateAppIdentifier.get()}")
+        println("✅ Generated iOS config: ${file.absolutePath}")
+        println("   Environment: ${generateEnvironment.get()}")
+        println("   App name: ${generateAppName.get()}")
+        println("   Bundle ID: ${generateAppIdentifier.get()}")
+        println("   Firebase config: ${firebaseConfigFile.get()}")
     }
 }
 
 tasks.register<GenerateIOSConfigTask>("generateIOSConfig") {
-    println("environment: $environment, appName: $appName, appIdentifier: $appIdentifier")
     this.generateEnvironment.set(environment)
     this.generateAppName.set(appName)
     generateAppIdentifier.set(appIdentifier)
+    firebaseConfigFile.set(iosFirebaseConfigFile)
     outputFile.set(File(project.rootDir, "iosApp/Configuration/DynamicConfig.xcconfig"))
+}
+
+// Task to configure iOS Firebase by copying the correct plist file
+abstract class ConfigureIOSFirebaseTask : DefaultTask() {
+    @get:Input
+    abstract val configureFirebaseEnvironment: Property<String>
+
+    @get:Input
+    abstract val firebaseConfigFile: Property<String>
+
+    @get:InputFile
+    abstract val sourceFile: RegularFileProperty
+
+    @get:OutputFile
+    abstract val targetFile: RegularFileProperty
+
+    @TaskAction
+    fun configure() {
+        val source = sourceFile.get().asFile
+        val target = targetFile.get().asFile
+
+        if (!source.exists()) {
+            throw GradleException("Firebase config file not found: ${source.absolutePath}")
+        }
+
+        target.parentFile.mkdirs()
+        source.copyTo(target, overwrite = true)
+
+        println("✅ Configured iOS Firebase for environment: ${configureFirebaseEnvironment.get()}")
+        println("   Source: ${source.name}")
+        println("   Target: ${target.absolutePath}")
+        println("   ⚠️  Remember to add GoogleService-Info.plist to your Xcode project if not already added")
+    }
+}
+
+tasks.register<ConfigureIOSFirebaseTask>("configureIOSFirebase") {
+    configureFirebaseEnvironment.set(environment)
+    firebaseConfigFile.set(iosFirebaseConfigFile)
+    sourceFile.set(File(project.rootDir, "iosApp/iosApp/$iosFirebaseConfigFile"))
+    targetFile.set(File(project.rootDir, "iosApp/iosApp/GoogleService-Info.plist"))
+}
+
+// Combined task to configure both platforms
+tasks.register("configureFirebase") {
+    group = "firebase"
+    description = "Configure Firebase for the current environment on both Android and iOS"
+    dependsOn("configureAndroidFirebase", "configureIOSFirebase")
+
+    doLast {
+        println("🔥 Firebase configured for environment: $environment")
+        println("   Android config: $androidFirebaseConfigFile")
+        println("   iOS config: $iosFirebaseConfigFile")
+    }
 }
 
 // Task to clean generated iOS config
@@ -292,15 +412,43 @@ tasks.register<CleanIOSConfigTask>("cleanIOSConfig") {
     configFile.set(File(project.rootDir, "iosApp/Configuration/DynamicConfig.xcconfig"))
 }
 
+// Configure Firebase before building Android
+tasks.matching { task ->
+    task.name.startsWith("assemble") ||
+        task.name.startsWith("bundle") ||
+        task.name == "processDebugGoogleServices" ||
+        task.name == "processReleaseGoogleServices"
+}.configureEach {
+    dependsOn("configureAndroidFirebase")
+}
+
+// Configure iOS tasks dependencies
 tasks.matching {
     (it.name.contains("ios", ignoreCase = true) || it.name.contains("Framework", ignoreCase = true)) &&
         !it.name.contains("generateIOSConfig") &&
-        !it.name.contains("cleanIOSConfig")
+        !it.name.contains("cleanIOSConfig") &&
+        !it.name.contains("configureIOSFirebase")
 }.configureEach {
-    dependsOn("generateIOSConfig")
+    dependsOn("generateIOSConfig", "configureIOSFirebase")
 }
 
 // Clean the generated config when cleaning
 tasks.named("clean") {
     dependsOn("cleanIOSConfig")
+
+    doLast {
+        // Clean up copied Firebase configs
+        val androidConfig = File(project.projectDir, "google-services.json")
+        val iosConfig = File(project.rootDir, "iosApp/iosApp/GoogleService-Info.plist")
+
+        if (androidConfig.exists()) {
+            androidConfig.delete()
+            println("Cleaned Android Firebase config")
+        }
+
+        if (iosConfig.exists()) {
+            iosConfig.delete()
+            println("Cleaned iOS Firebase config")
+        }
+    }
 }

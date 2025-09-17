@@ -94,6 +94,7 @@ naming:
       - '**/*.ios.kt'
       - '**/*.wasmJs.kt'
       - '**/*.jvm.kt'
+      - '**/*.desktop.kt'
 
 style:
   MagicNumber:
